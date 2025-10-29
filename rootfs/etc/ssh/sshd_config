@@ -1,0 +1,13 @@
+Port 22
+HostKey /run/secrets/ssh_host_key
+PermitRootLogin no
+PasswordAuthentication yes
+AuthorizedKeysFile /run/ssh/authorized_keys
+AllowTcpForwarding no
+GatewayPorts no
+X11Forwarding no
+UseDNS no
+Subsystem sftp /usr/lib/ssh/sftp-server
+PidFile /run/ssh/sshd.pid
+LogLevel ERROR
+PerSourcePenaltyExemptList ::1,127.0.0.1

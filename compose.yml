@@ -1,0 +1,34 @@
+name: "sftp"
+
+x-lockdown: &lockdown
+  # prevents write access to the image itself
+  read_only: true
+
+services:
+  sftp:
+    image: "11notes/sftp:10.2"
+    <<: *lockdown
+    environment:
+      TZ: "Europe/Zurich"
+      SSH_USER: "foo"
+      SSH_PASSWORD: "${SSH_PASSWORD}"
+    volumes:
+      - "foo.var:/home/foo"
+    tmpfs:
+      # needed for read-only
+      - "/run/ssh:uid=1000,gid=1000"
+      - "/run/secrets:uid=1000,gid=1000"
+    ports:
+      - "8022:22/tcp"
+    networks:
+      frontend:
+    sysctls:
+      # allow rootless container to access ports < 1024
+      net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+volumes:
+  foo.var:
+
+networks:
+  frontend:

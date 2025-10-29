@@ -1,0 +1,15 @@
+{
+  "image": "11notes/sftp",
+  "name": "sftp",
+  "root": "/home",
+  "semver": {
+    "version": "10.2"
+  },
+  "readme": {
+    "description": "Run sftp rootless.",
+    "introduction": "[OpenSSH](https://www.openssh.org/) (created by [OpenBSD](https://www.openbsd.org/)) is the premier connectivity tool for remote login with the SSH protocol. It encrypts all traffic to eliminate eavesdropping, connection hijacking, and other attacks. In addition, OpenSSH provides a large suite of secure tunneling capabilities, several authentication methods, and sophisticated configuration options.",
+    "built": {
+      "sftp/sftp": "https://github.com/sftp/sftp"
+    }
+  }
+}
