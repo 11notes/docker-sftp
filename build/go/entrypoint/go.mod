@@ -1,3 +1,3 @@
-module github.com/11notes/docker-minio
+module github.com/11notes/docker-sftp
 go 1.25.0
-require github.com/11notes/go v1.1.13
+require github.com/11notes/go v1.1.20

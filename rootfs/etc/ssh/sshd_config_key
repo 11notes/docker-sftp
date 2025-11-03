@@ -1,8 +1,9 @@
 Port 22
 HostKey /run/secrets/ssh_host_key
 PermitRootLogin no
-PasswordAuthentication yes
-AuthorizedKeysFile /run/ssh/authorized_keys
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile /run/secrets/authorized_keys
 AllowTcpForwarding no
 GatewayPorts no
 X11Forwarding no

@@ -5,6 +5,9 @@
   ARG APP_UID=1000 \
       APP_GID=1000
 
+# FOREIGN IMAGES
+  FROM 11notes/distroless:openssl AS distroless-openssl
+
 
 # ╔═════════════════════════════════════════════════════╗
 # ║                       BUILD                         ║
@@ -44,7 +47,8 @@
         APP_ROOT=${APP_ROOT}
 
   # :: multi-stage
-    COPY --chown=0:0 --from=build /distroless/ /
+    COPY --from=build /distroless/ /
+    COPY --from=distroless-openssl / /
     COPY ./rootfs /
 
 # :: INSTALL
@@ -58,12 +62,11 @@
     touch /run/ssh/passwd; \
     rm -f /etc/passwd; \
     ln -s /run/ssh/passwd /etc/passwd; \
-    chmod +x -R /usr/local/bin; \
-    chmod 4755 /usr/local/bin/entrypoint;
+    chmod +x -R /usr/local/bin;
 
 # :: MONITOR
   HEALTHCHECK --interval=5s --timeout=2s --start-period=5s \
-    CMD ["/usr/local/bin/entrypoint", "health"]
+    CMD ["/usr/bin/nc", "-z", "127.0.0.1", "22"]
 
 # :: EXECUTE
   USER ${APP_UID}:${APP_GID}

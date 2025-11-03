@@ -6,3 +6,4 @@ node_modules/
 .env
 ssh_host_ed25519_key.txt
 password.txt
+authorized_keys.txt
