@@ -47,7 +47,7 @@ services:
       SSH_USER: "foo"
       SSH_PASSWORD: "${SSH_PASSWORD}"
     volumes:
-      - "foo.var:/home/foo"
+      - "foo.var:/home"
     tmpfs:
       # needed for read-only
       - "/run/ssh:uid=1000,gid=1000,size=1m"
@@ -69,7 +69,7 @@ services:
       TZ: "Europe/Zurich"
       SSH_USER: "bar"
     volumes:
-      - "bar.var:/home/bar"
+      - "bar.var:/home"
     tmpfs:
       # needed for read-only
       - "/run/ssh:uid=1000,gid=1000,size=1m"
@@ -152,4 +152,4 @@ docker pull quay.io/11notes/sftp:10.2
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-sftp/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-sftp/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-sftp/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 03.11.2025, 14:21:35 (CET)*
+*created 03.11.2025, 15:00:45 (CET)*
