@@ -1,7 +1,7 @@
-![banner](https://github.com/11notes/defaults/blob/main/static/img/banner.png?raw=true)
+![banner](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/banner/README.png)
 
 # SFTP
-![size](https://img.shields.io/docker/image-size/11notes/sftp/2025.10.15?color=0eb305)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)![pulls](https://img.shields.io/docker/pulls/11notes/sftp?color=2b75d6)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)[<img src="https://img.shields.io/github/issues/11notes/docker-sftp?color=7842f5">](https://github.com/11notes/docker-sftp/issues)![5px](https://github.com/11notes/defaults/blob/main/static/img/transparent5x2px.png?raw=true)![swiss_made](https://img.shields.io/badge/Swiss_Made-FFFFFF?labelColor=FF0000&logo=data:image/svg%2bxml;base64,PHN2ZyB2ZXJzaW9uPSIxIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJtMTMgNmg2djdoN3Y2aC03djdoLTZ2LTdoLTd2LTZoN3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+)
+![size](https://img.shields.io/badge/image_size-${{ image_size }}-green?color=%2338ad2d)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)![pulls](https://img.shields.io/docker/pulls/11notes/sftp?color=2b75d6)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)[<img src="https://img.shields.io/github/issues/11notes/docker-sftp?color=7842f5">](https://github.com/11notes/docker-sftp/issues)![5px](https://raw.githubusercontent.com/11notes/static/refs/heads/main/img/markdown/transparent5x2px.png)![swiss_made](https://img.shields.io/badge/Swiss_Made-FFFFFF?labelColor=FF0000&logo=data:image/svg%2bxml;base64,PHN2ZyB2ZXJzaW9uPSIxIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJtMTMgNmg2djdoN3Y2aC03djdoLTZ2LTdoLTd2LTZoN3oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+)
 
 Run sftp rootless.
 
@@ -10,7 +10,7 @@ Run sftp rootless.
 [OpenSSH](https://www.openssh.org/) (created by [OpenBSD](https://www.openbsd.org/)) is the premier connectivity tool for remote login with the SSH protocol. It encrypts all traffic to eliminate eavesdropping, connection hijacking, and other attacks. In addition, OpenSSH provides a large suite of secure tunneling capabilities, several authentication methods, and sophisticated configuration options.
 
 # SYNOPSIS 📖
-**What can I do with this?** This image will run a [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) sftp server based on openssh. Unlike other images, this image does not provide chroot jails, but it's intended to run as a single user with all the shares needed mounted in ```/home/%u```. Use an SSH proxy in front of this image when you need to expose multiple endpoints via a single entry point. The image’s entrypoint does quickly elevate to root to change the username and drops instantly back down to 1000 for the ssh server. If no **ssh_host_key** secret is set, the image will create a new one on each start of the container.
+**What can I do with this?** This image will run a [rootless](https://github.com/11notes/RTFM/blob/main/linux/container/image/rootless.md) sftp server based on openssh. Unlike other images, this image does not provide chroot jails, but it's intended to run as a single user with all the shares needed mounted in ```/home/%u```. Use an SSH proxy in front of this image when you need to expose multiple endpoints via a single entry point. You must provide secrets to use this image.
 
 # UNIQUE VALUE PROPOSITION 💶
 **Why should I run this image and not the other image(s) that already exist?** Good question! Because ...
@@ -34,6 +34,9 @@ name: "sftp"
 x-lockdown: &lockdown
   # prevents write access to the image itself
   read_only: true
+  # prevents any process within the container to gain more privileges
+  security_opt:
+    - "no-new-privileges=true"
 
 services:
   sftp:
@@ -47,8 +50,32 @@ services:
       - "foo.var:/home/foo"
     tmpfs:
       # needed for read-only
-      - "/run/ssh:uid=1000,gid=1000"
-      - "/run/secrets:uid=1000,gid=1000"
+      - "/run/ssh:uid=1000,gid=1000,size=1m"
+    secrets:
+      - "ssh_host_key"
+    ports:
+      - "8021:22/tcp"
+    networks:
+      frontend:
+    sysctls:
+      # allow rootless container to access ports < 1024
+      net.ipv4.ip_unprivileged_port_start: 22
+    restart: "always"
+
+  sftp-key:
+    image: "11notes/sftp:2025.10.15"
+    <<: *lockdown
+    environment:
+      TZ: "Europe/Zurich"
+      SSH_USER: "bar"
+    volumes:
+      - "bar.var:/home/bar"
+    tmpfs:
+      # needed for read-only
+      - "/run/ssh:uid=1000,gid=1000,size=1m"
+    secrets:
+      - "ssh_host_key"
+      - "authorized_keys"
     ports:
       - "8022:22/tcp"
     networks:
@@ -60,9 +87,16 @@ services:
 
 volumes:
   foo.var:
+  bar.var:
 
 networks:
   frontend:
+
+secrets:
+  ssh_host_key:
+    file: "./ssh_host_ed25519_key.txt"
+  authorized_keys:
+    file: "./authorized_keys.txt"
 ```
 To find out how you can change the default UID/GID of this container image, consult the [RTFM](https://github.com/11notes/RTFM/blob/main/linux/container/image/11notes/how-to.changeUIDGID.md#change-uidgid-the-correct-way).
 
@@ -89,7 +123,7 @@ These are the main tags for the image. There is also a tag for each commit and i
 * [2025.10.15](https://hub.docker.com/r/11notes/sftp/tags?name=2025.10.15)
 
 ### There is no latest tag, what am I supposed to do about updates?
-It is of my opinion that the ```:latest``` tag is dangerous. Many times, I’ve introduced **breaking** changes to my images. This would have messed up everything for some people. If you don’t want to change the tag to the latest [semver](https://semver.org/), simply use the short versions of [semver](https://semver.org/). Instead of using ```:2025.10.15``` you can use ```:2025``` or ```:2025.10```. Since on each new version these tags are updated to the latest version of the software, using them is identical to using ```:latest``` but at least fixed to a major or minor version.
+It is my opinion that the ```:latest``` tag is a bad habbit and should not be used at all. Many developers introduce **breaking changes** in new releases. This would messed up everything for people who use ```:latest```. If you don’t want to change the tag to the latest [semver](https://semver.org/), simply use the short versions of [semver](https://semver.org/). Instead of using ```:2025.10.15``` you can use ```:2025``` or ```:2025.10```. Since on each new version these tags are updated to the latest version of the software, using them is identical to using ```:latest``` but at least fixed to a major or minor version. Which in theory should not introduce breaking changes.
 
 If you still insist on having the bleeding edge release of this app, simply use the ```:rolling``` tag, but be warned! You will get the latest version of the app instantly, regardless of breaking changes or security issues or what so ever. You do this at your own risk!
 
@@ -107,7 +141,7 @@ docker pull quay.io/11notes/sftp:2025.10.15
 * [${{ json_readme_parent_image }}](${{ json_readme_parent_url }})
 
 # BUILT WITH 🧰
-* [sftp/sftp](https://github.com/sftp/sftp)
+* [openssh](https://www.openssh.org/)
 * [11notes/util](https://github.com/11notes/docker-util)
 
 # GENERAL TIPS 📌
@@ -118,4 +152,4 @@ docker pull quay.io/11notes/sftp:2025.10.15
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-sftp/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-sftp/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-sftp/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 30.10.2025, 06:17:03 (CET)*
+*created 03.11.2025, 14:17:08 (CET)*
