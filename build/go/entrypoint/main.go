@@ -20,7 +20,7 @@ func StartSSH(mode string){
 }
 
 func CreateUser(u string, h string){
-	if err := Eleven.Util.WriteFile("/run/ssh/passwd", u+":"+h+":1000:1000:docker:/home/"+u+":/bin/ash\n"); err != nil {
+	if err := Eleven.Util.WriteFile("/run/ssh/passwd", u+":"+h+":1000:1000:docker:/home:/bin/ash\n"); err != nil {
 		Eleven.LogFatal("could not set new user: %s", err.Error())
 	}
 }

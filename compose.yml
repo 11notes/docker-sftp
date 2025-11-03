@@ -9,14 +9,14 @@ x-lockdown: &lockdown
 
 services:
   sftp:
-    image: "11notes/sftp:2025.10.15"
+    image: "11notes/sftp:10.2"
     <<: *lockdown
     environment:
       TZ: "Europe/Zurich"
       SSH_USER: "foo"
       SSH_PASSWORD: "${SSH_PASSWORD}"
     volumes:
-      - "foo.var:/home/foo"
+      - "foo.var:/home"
     tmpfs:
       # needed for read-only
       - "/run/ssh:uid=1000,gid=1000,size=1m"
@@ -32,13 +32,13 @@ services:
     restart: "always"
 
   sftp-key:
-    image: "11notes/sftp:2025.10.15"
+    image: "11notes/sftp:10.2"
     <<: *lockdown
     environment:
       TZ: "Europe/Zurich"
       SSH_USER: "bar"
     volumes:
-      - "bar.var:/home/bar"
+      - "bar.var:/home"
     tmpfs:
       # needed for read-only
       - "/run/ssh:uid=1000,gid=1000,size=1m"
