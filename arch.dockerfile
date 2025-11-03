@@ -62,7 +62,8 @@
     touch /run/ssh/passwd; \
     rm -f /etc/passwd; \
     ln -s /run/ssh/passwd /etc/passwd; \
-    chmod +x -R /usr/local/bin;
+    chmod +x -R /usr/local/bin; \
+    chown -R ${APP_UID}:${APP_GID} ${APP_ROOT};
 
 # :: MONITOR
   HEALTHCHECK --interval=5s --timeout=2s --start-period=5s \
