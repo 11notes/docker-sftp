@@ -3,7 +3,7 @@
   "name": "sftp",
   "root": "/home",
   "semver": {
-    "version": "2025.10.15"
+    "version": "10.2"
   },
   "readme": {
     "description": "Run sftp rootless.",
