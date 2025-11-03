@@ -32,7 +32,7 @@ services:
     restart: "always"
 
   sftp-key:
-    image: "11notes/sftp:10.2"
+    image: "11notes/sftp:2025.10.15"
     <<: *lockdown
     environment:
       TZ: "Europe/Zurich"
