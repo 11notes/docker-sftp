@@ -51,9 +51,6 @@
     COPY --from=distroless-openssl / /
     COPY ./rootfs /
 
-  # :: app specific environment
-    ENV HISTFILE=/.ash_history
-
 # :: INSTALL
   USER root
   RUN set -ex; \
