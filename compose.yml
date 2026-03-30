@@ -8,7 +8,7 @@ x-lockdown: &lockdown
     - "no-new-privileges=true"
 
 services:
-  sftp:
+  password:
     image: "11notes/sftp:10.2"
     <<: *lockdown
     environment:
@@ -31,7 +31,7 @@ services:
       net.ipv4.ip_unprivileged_port_start: 22
     restart: "always"
 
-  sftp-key:
+  key:
     image: "11notes/sftp:10.2"
     <<: *lockdown
     environment:
