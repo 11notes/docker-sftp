@@ -32,7 +32,7 @@ func main(){
 
 	if errPassword == nil && errKey != nil {
 		// password authentication
-		hash, err := eleven.Util.Run("/bin/ash", []string{"-c", "echo " + password + " | /usr/local/bin/openssl passwd -6 -salt docker -stdin"})
+		hash, err := eleven.Util.Run("/bin/ash", []string{"-c", "echo '" + password + "' | /usr/local/bin/openssl passwd -6 -salt docker -stdin"})
 		if err != nil {
 			eleven.LogFatal("could not create password hash: %s", err.Error())
 		}
