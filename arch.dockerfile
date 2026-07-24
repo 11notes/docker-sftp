@@ -55,9 +55,10 @@
 # :: INSTALL
   USER root
   RUN set -ex; \
+    MAJOR_MINOR=$(echo "${APP_VERSION}" | awk -F '.' '{print $1"."$2}'); \
     apk --update --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main add \
       rsync \
-      openssh~=${APP_VERSION}; \
+      openssh~=${MAJOR_MINOR}; \
     rm -f /etc/motd; \
     mkdir -p /run/ssh; \
     touch /run/ssh/passwd; \
